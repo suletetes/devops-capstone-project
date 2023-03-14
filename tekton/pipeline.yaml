@@ -63,15 +63,33 @@ spec:
       runAfter:
         - clone
     - name: build
+        workspaces:
+          - name: source
+            workspace: pipeline-workspace
+        taskRef:
+          name: buildah
+          kind: ClusterTask
+        params:
+        - name: IMAGE
+          value: "$(params.build-image)"
+        runAfter:
+          - tests
+          - lint
+    - name: deploy
       workspaces:
-        - name: source
+        - name: manifest-dir
           workspace: pipeline-workspace
       taskRef:
-        name: buildah
+        name: openshift-client
         kind: ClusterTask
       params:
-      - name: IMAGE
-        value: "$(params.build-image)"
+      - name: SCRIPT
+        value: |
+          echo "Updating manifest..."
+          sed -i "s|IMAGE_NAME_HERE|$(params.build-image)|g" deploy/deployment.yaml
+          cat deploy/deployment.yaml
+          echo "Deploying to OpenShift..."
+          oc apply -f deploy/
+          oc get pods -l app=accounts
       runAfter:
-        - tests
-        - lint
+        - build
