@@ -122,7 +122,6 @@ Please only use these commands for working stand-alone on your own computer with
 
 You can now perform Tekton development locally, just like in the Cloud IDE lab environment.
 
-![Build Status](https://github.com/suletetes/devops-capstone-project/actions/workflows/ci-build.yaml/badge.svg)
 
 ## Author
 
